@@ -14,9 +14,14 @@ connectDB();
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ai-learning-platform-gules.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:allowedOrigins,
     credentials: true,
   })
 );
