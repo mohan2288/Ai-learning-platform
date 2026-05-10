@@ -6,7 +6,7 @@ import useCourses from "../../hooks/useCourses";
 import useAuth from "../../hooks/useAuth";
 import useDebounce from "../../hooks/useDebounce";
 import { categories, levels } from "../../utils/constants";
-import { getCourseImage } from "../../utils/helpers";
+import { getCourseImage, useFallbackCourseImage } from "../../utils/helpers";
 import { deleteCourse } from "../../services/courseService";
 import EmptyState from "../../components/common/EmptyState";
 import Loader from "../../components/common/Loader";
@@ -77,7 +77,7 @@ const Courses = () => {
         {courses.map((course) => (
           <article key={course._id} className="overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
             <Link to={`/courses/${course._id}`}>
-              <img className="h-44 w-full object-cover" src={getCourseImage(course)} alt="" />
+              <img className="h-44 w-full object-cover" src={getCourseImage(course)} alt={course.title} onError={useFallbackCourseImage} loading="lazy" />
             </Link>
             <div className="p-5">
               <Link to={`/courses/${course._id}`}>

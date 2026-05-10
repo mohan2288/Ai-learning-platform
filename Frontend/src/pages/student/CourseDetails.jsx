@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { enrollCourse, getCourseById, getProgress, updateProgress } from "../../services/courseService";
-import { getCourseImage } from "../../utils/helpers";
+import { getCourseImage, useFallbackCourseImage } from "../../utils/helpers";
 import Loader from "../../components/common/Loader";
 import ProgressBar from "../../components/course/ProgressBar";
 
@@ -129,7 +129,7 @@ const CourseDetails = () => {
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
       <section className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-        <img className="h-72 w-full object-cover" src={getCourseImage(course)} alt="" />
+        <img className="h-72 w-full object-cover" src={getCourseImage(course)} alt={course.title} onError={useFallbackCourseImage} />
         <div className="p-6">
           <p className="text-sm font-bold uppercase text-blue-700">{course.category} / {course.level}</p>
           <h1 className="mt-2 text-3xl font-black sm:text-5xl">{course.title}</h1>
