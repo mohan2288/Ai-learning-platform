@@ -5,6 +5,29 @@ import { chatWithAI, generateMCQ } from "../../services/aiService";
 import ChatMessage from "../../components/ai/ChatMessage";
 import EmptyState from "../../components/common/EmptyState";
 
+const getAIErrorMessage = (error, fallback) => {
+  const status = error.response?.status;
+  const message = error.response?.data?.message || "";
+  const retryAfterSeconds = error.response?.data?.retryAfterSeconds;
+  const isQuotaError =
+    status === 429 ||
+    message.includes("429 Too Many Requests") ||
+    message.toLowerCase().includes("quota exceeded") ||
+    message.includes("[GoogleGenerativeAI Error]");
+
+  if (isQuotaError) {
+    return retryAfterSeconds
+      ? `AI usage limit reached. Please try again in ${retryAfterSeconds} seconds.`
+      : "AI usage limit reached. Please try again shortly.";
+  }
+
+  if (message.length > 140) {
+    return fallback;
+  }
+
+  return message || fallback;
+};
+
 const AIAssistant = () => {
   const [messages, setMessages] = useState([{ role: "assistant", text: "Ask me for explanations, examples, or study help." }]);
   const [input, setInput] = useState("");
@@ -25,7 +48,7 @@ const AIAssistant = () => {
       const { data } = await chatWithAI({ message: userMessage.text });
       setMessages((current) => [...current, data.data]);
     } catch (error) {
-      toast.error(error.response?.data?.message || "AI chat failed");
+      toast.error(getAIErrorMessage(error, "AI chat failed. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -37,7 +60,7 @@ const AIAssistant = () => {
       const { data } = await generateMCQ({ topic, difficulty: "Beginner", count: 5 });
       setQuestions(Array.isArray(data.data) ? data.data : []);
     } catch (error) {
-      toast.error(error.response?.data?.message || "MCQ generation failed");
+      toast.error(getAIErrorMessage(error, "MCQ generation failed. Please try again."));
     } finally {
       setLoading(false);
     }

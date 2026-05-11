@@ -5,6 +5,16 @@ const parseJsonResponse = (text) => {
   return JSON.parse(cleaned);
 };
 
+const sendAIError = (res, error) => {
+  res.status(error.statusCode || 500).json({
+    success: false,
+    message: error.message || "AI request failed",
+    ...(error.details?.retryAfterSeconds && {
+      retryAfterSeconds: error.details.retryAfterSeconds,
+    }),
+  });
+};
+
 export const generateMCQ = async (req, res) => {
   try {
     const { topic, difficulty = "Beginner", count = 5 } = req.body;
@@ -43,10 +53,7 @@ Return only valid JSON in this shape:
       data: questions,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    sendAIError(res, error);
   }
 };
 
@@ -75,9 +82,6 @@ Student question: ${message}
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    sendAIError(res, error);
   }
 };
