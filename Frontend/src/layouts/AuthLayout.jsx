@@ -7,9 +7,6 @@ const AuthLayout = ({ children }) => {
           <h1 className="max-w-2xl text-4xl font-black leading-tight sm:text-6xl">
             Learn faster with guided courses, progress insight, and AI support.
           </h1>
-          <p className="mt-5 max-w-xl text-base text-slate-300 sm:text-lg">
-            A portfolio-ready MERN learning workspace for students and trainers.
-          </p>
         </section>
         <section className="flex items-center px-6 pb-12 lg:py-12">{children}</section>
       </div>
